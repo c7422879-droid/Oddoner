@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oddoner - Bienestar Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --primary: #1a1a1a;
+            --text: #e0e0e0;
+            --accent1: #bb86fc;
+            --accent2: #03dac6;
+            --surface: #1e1e1e;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 2rem;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--accent1);
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--accent1);
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+        .category {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: var(--accent2);
+            margin-bottom: 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--accent2);
+            padding-bottom: 0.5rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .btn-link {
+            background: linear-gradient(145deg, var(--surface), #2a2a2a); /* Subtle gradient for depth */
+            color: var(--text);
+            text-decoration: none;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 120px;
+        }
+        .btn-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow-color);
+            border-color: var(--accent1);
+        }
+        .btn-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .btn-desc {
+            font-size: 0.9rem;
+            margin: 0.5rem 0 0;
+            opacity: 0.7;
+        }
+        /* Specific Button Colors */
+        .btn-link[data-tool="aa"], .btn-link[data-tool="toxic"] { border-left: 5px solid #ff7675; }
+        .btn-link[data-tool="mental"], .btn-link[data-tool="ansiedad"], .btn-link[data-tool="nino"] { border-left: 5px solid #74b9ff; }
+        .btn-link[data-tool="respiracion"], .btn-link[data-tool="neuro"], .btn-link[data-tool="colores"] { border-left: 5px solid #55efc4; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Oddoner</h1>
+        <p>Tu espacio de herramientas para el bienestar y la introspección.</p>
+        <div id="current-time" style="font-size: 1.5rem; margin-top: 1rem; color: var(--accent2);"></div>
+    </div>
+
+    <div class="container">
+        <div class="category">
+            <h2>Herramientas de Bienestar</h2>
+            <div class="grid">
+                <a href="inventario_aa.html" class="btn-link" data-tool="aa">
+                    <h3 class="btn-title">Inventario AA</h3>
+                    <p class="btn-desc">4to Paso: Resentimientos y patrones.</p>
+                </a>
+                <a href="test_toxic.html" class="btn-link" data-tool="toxic">
+                    <h3 class="btn-title">Test Toxic</h3>
+                    <p class="btn-desc">Analizador de riesgos de sustancias.</p>
+                </a>
+                <a href="mental_health.html" class="btn-link" data-tool="mental">
+                    <h3 class="btn-title">Salud Mental</h3>
+                    <p class="btn-desc">Recursos y guías interactivas.</p>
+                </a>
+                <a href="anxiety_addiction_capsule.html" class="btn-link" data-tool="ansiedad">
+                    <h3 class="btn-title">Cápsula de Ansiedad</h3>
+                    <p class="btn-desc">Ejercicios rápidos para calmar la mente.</p>
+                </a>
+                <a href="nino_interior.html" class="btn-link" data-tool="nino">
+                    <h3 class="btn-title">Niño Interior</h3>
+                    <p class="btn-desc">Conecta y sana tu yo del pasado.</p>
+                </a>
+                <a href="vaciado_cerebro.html" class="btn-link" data-tool="ansiedad">
+                    <h3 class="btn-title">Vaciado de Cerebro</h3>
+                    <p class="btn-desc">La ansiedad a menudo es "ruido de fondo". Escribirlo lo saca de tu cabeza y lo pone en el papel, donde el cerebro siente que ya no tiene que "recordar" el problema.</p>
+                </a>
+                <a href="#" class="btn-link" data-tool="meditacion">
+                    <h3 class="btn-title">Meditación Guiada</h3>
+                    <p class="btn-desc">Sesiones de meditación para calmar la mente y reducir el estrés.</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>Juegos y Ejercicios</h2>
+            <div class="grid">
+                <a href="respiracion.html" class="btn-link" data-tool="respiracion">
+                    <h3 class="btn-title">Respiración Guiada</h3>
+                    <p class="btn-desc">Círculo de respiración para la ansiedad.</p>
+                </a>
+                <a href="neuro_gate.html" class="btn-link" data-tool="neuro">
+                    <h3 class="btn-title">Neuro Gate</h3>
+                    <p class="btn-desc">Entrenamiento cognitivo con niveles.</p>
+                </a>
+                <a href="colores.html" class="btn-link" data-tool="colores">
+                    <h3 class="btn-title">Juego de Colores</h3>
+                    <p class="btn-desc">Desafía tu memoria y percepción.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call to display time immediately
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js').then(registration => {
+                    console.log('ServiceWorker registrado con éxito:', registration.scope);
+                }, err => {
+                    console.log('El registro de ServiceWorker falló:', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
