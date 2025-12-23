@@ -1,41 +1,61 @@
-const CACHE_NAME = 'oddoner-cache-v1';
+const CACHE_NAME = 'oddoner-cache-v2'; // Incremented version
 const urlsToCache = [
-  './', // Ruta principal de la app
+  './',
   'index.html',
+  'capsule.css',
+  'mental_health.css',
   'manifest.json',
-  'images/icon-192x192.png',
-  'images/icon-512x512.png',
-  // Si tienes hojas de estilo o scripts externos, añádelos aquí.
-  // Como tu CSS y JS están en línea, solo necesitamos los archivos principales.
+  'admin.html',
+  'anxiety_addiction_capsule.html',
+  'colores.html',
+  'inventario_aa.html',
+  'login.html',
+  'mental_health.html',
+  'neuro_gate.html',
+  'nino_interior.html',
+  'respiracion.html',
+  'test_toxic.html',
+  'vaciado_cerebro.html',
+  'audio/piano.mp3',
+  'audio/rain.mp3',
+  'audio/relax.mp3',
+  'image/icon-152.png',
+  'image/icon-192.png',
+  'image/icon-512.png',
+  'image/mental_health.png'
 ];
 
-// Instalar Service Worker y guardar el contenido estático
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Cache abierto en el Service Worker');
+        console.log('Cache abierto y archivos principales cacheados');
         return cache.addAll(urlsToCache);
       })
   );
 });
 
-// Interceptar solicitudes de red y servir desde el caché si está disponible
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Se encuentra en caché, lo servimos
-        if (response) {
-          return response;
-        }
-        // No se encuentra en caché, vamos a la red
-        return fetch(event.request);
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(event.request).then(response => {
+        const fetchPromise = fetch(event.request).then(networkResponse => {
+          // Si la solicitud es válida, la guardamos en caché
+          if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        }).catch(err => {
+            console.log('Fetch fallido; la red podría estar desconectada.', err);
+        });
+
+        // Devolvemos la respuesta del caché si existe, si no, esperamos la respuesta de la red
+        return response || fetchPromise;
+      });
+    })
   );
 });
 
-// Activar Service Worker y limpiar versiones antiguas del caché
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -43,7 +63,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            // Elimina los caches que no estén en la whitelist
+            console.log('Borrando caché antiguo:', cacheName);
             return caches.delete(cacheName);
           }
         })
