@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juegos de Colores - Oddoner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --surface: #1e1e1e;
+            --text: #e0e0e0;
+            --accent1: #ff7043;
+            --accent2: #26a69a;
+            --correct: #66bb6a;
+            --incorrect: #ef5350;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            margin: 0;
+            padding: 1rem;
+            text-align: center;
+        }
+        .main-container { max-width: 800px; margin: auto; }
+        h1 { color: var(--accent1); }
+        .game-menu button, .back-to-menu {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--accent1);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin: 0.5rem;
+            transition: all 0.3s;
+        }
+        .game-menu button:hover { background-color: var(--accent1); color: var(--bg-dark); }
+        .game-view { display: none; }
+        .game-container { padding-top: 2rem; }
+        .back-to-menu { border-color: var(--accent2); margin-top: 2rem; }
+        .back-to-menu:hover { background-color: var(--accent2); color: var(--bg-dark); }
+
+        /* Memory Game */
+        #memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: auto;
+        }
+        .memory-card {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: var(--surface);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.4s;
+            transform-style: preserve-3d;
+        }
+        .memory-card.flipped, .memory-card.matched {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+        }
+        .card-back { transform: rotateY(180deg); }
+
+        /* Reaction Game */
+        #reaction-game-container { max-width: 500px; margin: auto; }
+        #word-display {
+            font-size: 3rem;
+            font-weight: 600;
+            margin: 2rem 0;
+            padding: 1rem;
+        }
+        #color-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        #color-options button {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #color-options button:hover { transform: scale(1.05); }
+        .score { font-size: 1.2rem; margin-top: 1rem; }
+
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1>Juegos de Colores</h1>
+        
+        <div id="game-menu" class="game-menu">
+            <p>Selecciona un juego para empezar</p>
+            <button onclick="startGame('memory')">Memoria de Colores</button>
+            <button onclick="startGame('reaction')">Reacción de Colores</button>
+        </div>
+
+        <div id="memory-game" class="game-view">
+            <h2>Memoria de Colores</h2>
+            <p>Encuentra las parejas de colores.</p>
+            <div id="memory-grid" class="game-container"></div>
+            <button class="back-to-menu" onclick="showMenu()">Volver al Menú</button>
+        </div>
+
+        <div id="reaction-game" class="game-view">
+            <h2>Reacción de Colores</h2>
+            <p>Haz clic en el botón que corresponde al <strong>significado</strong> de la palabra, no a su color.</p>
+            <div id="reaction-game-container" class="game-container">
+                <div id="word-display"></div>
+                <div id="color-options"></div>
+                <div class="score">Aciertos: <span id="reaction-score">0</span></div>
+            </div>
+            <button class="back-to-menu" onclick="showMenu()">Volver al Menú</button>
+        </div>
+
+        <a href="index.html" class="back-to-menu" style="display: block;">Página Principal</a>
+    </div>
+
+<script>
+    const menu = document.getElementById('game-menu');
+    const memoryGameView = document.getElementById('memory-game');
+    const reactionGameView = document.getElementById('reaction-game');
+
+    function showMenu() {
+        menu.style.display = 'block';
+        memoryGameView.style.display = 'none';
+        reactionGameView.style.display = 'none';
+    }
+
+    function startGame(game) {
+        menu.style.display = 'none';
+        if (game === 'memory') {
+            memoryGameView.style.display = 'block';
+            initMemoryGame();
+        } else if (game === 'reaction') {
+            reactionGameView.style.display = 'block';
+            initReactionGame();
+        }
+    }
+
+    // --- MEMORY GAME ---
+    const memoryGrid = document.getElementById('memory-grid');
+    const memoryColors = ['#e53935', '#d81b60', '#8e24aa', '#5e35b1', '#3949ab', '#1e88e5', '#039be5', '#00acc1'];
+    let memoryCards = [];
+    let flippedCards = [];
+    let lockBoard = false;
+
+    function initMemoryGame() {
+        memoryGrid.innerHTML = '';
+        memoryCards = [...memoryColors, ...memoryColors].sort(() => 0.5 - Math.random());
+        
+        memoryCards.forEach(color => {
+            const card = document.createElement('div');
+            card.classList.add('memory-card');
+            card.dataset.color = color;
+            card.innerHTML = `
+                <div class="card-face card-front"></div>
+                <div class="card-face card-back" style="background-color: ${color}"></div>
+            `;
+            card.addEventListener('click', flipCard);
+            memoryGrid.appendChild(card);
+        });
+    }
+
+    function flipCard() {
+        if (lockBoard) return;
+        if (this === flippedCards[0]) return;
+
+        this.classList.add('flipped');
+        flippedCards.push(this);
+
+        if (flippedCards.length === 2) {
+            checkForMatch();
+        }
+    }
+
+    function checkForMatch() {
+        lockBoard = true;
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.color === card2.dataset.color) {
+            disableCards();
+        } else {
+            unflipCards();
+        }
+    }
+
+    function disableCards() {
+        flippedCards.forEach(card => card.classList.add('matched'));
+        resetBoard();
+    }
+
+    function unflipCards() {
+        setTimeout(() => {
+            flippedCards.forEach(card => card.classList.remove('flipped'));
+            resetBoard();
+        }, 1200);
+    }
+    
+    function resetBoard() {
+        [flippedCards, lockBoard] = [[], false];
+    }
+
+    // --- REACTION GAME ---
+    const wordDisplay = document.getElementById('word-display');
+    const colorOptionsContainer = document.getElementById('color-options');
+    const reactionScoreDisplay = document.getElementById('reaction-score');
+    const reactionColors = {
+        'Rojo': '#ef5350', 'Azul': '#42a5f5', 'Verde': '#66bb6a', 'Amarillo': '#ffee58'
+    };
+    const colorNames = Object.keys(reactionColors);
+    let reactionScore = 0;
+    let currentCorrectAnswer;
+
+    function initReactionGame() {
+        reactionScore = 0;
+        reactionScoreDisplay.innerText = reactionScore;
+        setupReactionButtons();
+        nextReactionRound();
+    }
+    
+    function setupReactionButtons() {
+        colorOptionsContainer.innerHTML = '';
+        colorNames.forEach(name => {
+            const button = document.createElement('button');
+            button.innerText = name;
+            button.style.backgroundColor = reactionColors[name];
+            if (name === 'Amarillo') button.style.color = '#333';
+            button.onclick = () => checkReactionAnswer(name);
+            colorOptionsContainer.appendChild(button);
+        });
+    }
+
+    function nextReactionRound() {
+        const randomColorName = colorNames[Math.floor(Math.random() * colorNames.length)];
+        let randomColorValue;
+        do {
+            randomColorValue = reactionColors[colorNames[Math.floor(Math.random() * colorNames.length)]];
+        } while (randomColorValue === reactionColors[randomColorName]);
+
+        wordDisplay.innerText = randomColorName;
+        wordDisplay.style.color = randomColorValue;
+        currentCorrectAnswer = randomColorName;
+    }
+
+    function checkReactionAnswer(chosenName) {
+        if (chosenName === currentCorrectAnswer) {
+            reactionScore++;
+            reactionScoreDisplay.innerText = reactionScore;
+            wordDisplay.style.backgroundColor = 'var(--correct)';
+        } else {
+            wordDisplay.style.backgroundColor = 'var(--incorrect)';
+        }
+        setTimeout(() => {
+             wordDisplay.style.backgroundColor = 'transparent';
+            nextReactionRound();
+        }, 500);
+    }
+
+</script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').then(registration => {
+                console.log('ServiceWorker registrado con éxito:', registration.scope);
+            }, err => {
+                console.log('El registro de ServiceWorker falló:', err);
+            });
+        });
+    }
+</script>
+</body>
+</html>

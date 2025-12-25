@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oddoner - Panel de Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #131314; color: #e3e3e3; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: #1e1f20; padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #444746; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444746; padding-bottom: 20px; margin-bottom: 20px; }
+        h1 { margin: 0; background: linear-gradient(90deg, #8AB4F8, #C58AF9); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: #8AB4F8; font-size: 24px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 24px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-refresh { background: linear-gradient(135deg, #4285f4, #9b72cb); color: white; margin-right: 10px; }
+        .btn-logout { background: transparent; border: 1px solid #ff8a80; color: #ff8a80; text-decoration: none; font-size: 14px; }
+        .btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-logout:hover { background: rgba(255, 138, 128, 0.1); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #444746; }
+        th { background-color: #1e1f20; color: #8AB4F8; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        tr:hover { background-color: #28292a; }
+        .status-msg { text-align: center; padding: 20px; color: #888; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Panel de Administración</h1>
+        <div>
+            <button class="btn btn-refresh" onclick="cargarUsuarios()">🔄 Actualizar</button>
+            <button onclick="logout()" class="btn btn-logout">Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo Electrónico</th>
+                <th>Género</th>
+                <th>Edad</th>
+            </tr>
+        </thead>
+        <tbody id="listaCuerpo">
+            </tbody>
+    </table>
+    <div id="mensaje" class="status-msg">Cargando usuarios...</div>
+
+    <h2 style="margin-top: 40px; color: #8AB4F8;">Progreso de Tests (Últimos 20)</h2>
+    <canvas id="actividadChart" style="width:100%; max-height:400px; margin-top:20px; background: #252627; border-radius: 12px; padding: 10px;"></canvas>
+</div>
+
+<script>
+    async function cargarUsuarios() {
+        const cuerpo = document.getElementById('listaCuerpo');
+        const mensaje = document.getElementById('mensaje');
+        
+        // Limpiar tabla y mostrar que estamos cargando
+        cuerpo.innerHTML = "";
+        mensaje.style.display = "block";
+        mensaje.innerText = "Conectando con el servidor...";
+
+        try {
+            // USAMOS EL PARÁMETRO ?accion=listar QUE DEFINIMOS EN EL WORKER
+            const url = "https://oddoner-appi.odonerapp.workers.dev/?accion=listar";
+            const respuesta = await fetch(url);
+            
+            if (!respuesta.ok) throw new Error("Error en la respuesta del servidor");
+
+            const usuarios = await respuesta.json();
+
+            if (usuarios.length === 0) {
+                mensaje.innerText = "No hay usuarios registrados en la base de datos.";
+            } else {
+                mensaje.style.display = "none"; // Ocultar mensaje de carga
+                
+                usuarios.forEach(u => {
+                    const fila = document.createElement('tr');
+                    fila.innerHTML = `
+                        <td>${u.nombre || 'Sin nombre'}</td>
+                        <td>${u.correo || 'Sin correo'}</td>
+                        <td>${u.genero || '-'}</td>
+                        <td>${u.edad || '-'}</td>
+                    `;
+                    cuerpo.appendChild(fila);
+                });
+            }
+        } catch (error) {
+            console.error("Error al cargar:", error);
+            mensaje.innerText = "❌ Error al cargar los datos. Revisa la consola (F12).";
+            mensaje.style.color = "#ff4d4d";
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem('isAdminLoggedIn');
+        window.location.href = 'login.html';
+    }
+
+    // Verificar sesión al cargar la página
+    window.onload = function() {
+        if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        } else {
+            cargarUsuarios();
+        }
+    };
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCDUxoIS2pNcNhsGkelf1kaiatpCQJPKbQ",
+        authDomain: "oddoner-a1f1c.firebaseapp.com",
+        projectId: "oddoner-a1f1c",
+        storageBucket: "oddoner-a1f1c.firebasestorage.app",
+        messagingSenderId: "145944050756",
+        appId: "1:145944050756:web:747a3c0a08207da01bd011"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function cargarGrafica() {
+        const ctx = document.getElementById('actividadChart');
+        if(!ctx) return;
+
+        try {
+            // Obtener los últimos 20 resultados ordenados por fecha
+            const q = query(collection(db, "resultados_tests"), orderBy("fecha", "desc"), limit(20));
+            const querySnapshot = await getDocs(q);
+            
+            const labels = [];
+            const dataPoints = [];
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const date = data.fecha ? new Date(data.fecha.seconds * 1000).toLocaleDateString() : '?';
+                labels.push(`${data.test} (${date})`);
+                dataPoints.push(data.score);
+            });
+
+            // Invertir arrays para que la gráfica vaya de izquierda (antiguo) a derecha (nuevo)
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.reverse(),
+                    datasets: [{
+                        label: 'Puntaje',
+                        data: dataPoints.reverse(),
+                        borderColor: '#8AB4F8',
+                        backgroundColor: 'rgba(138, 180, 248, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#e3e3e3' } } },
+                    scales: {
+                        y: { ticks: { color: '#e3e3e3' }, grid: { color: '#444' } },
+                        x: { ticks: { color: '#e3e3e3' }, grid: { color: '#444' } }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Error cargando gráfica:", e);
+        }
+    }
+    cargarGrafica();
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').then(registration => {
+                console.log('ServiceWorker registrado con éxito:', registration.scope);
+            }, err => {
+                console.log('El registro de ServiceWorker falló:', err);
+            });
+        });
+    }
+</script>
+</body>
+</html>

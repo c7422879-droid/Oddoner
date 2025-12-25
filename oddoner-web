@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oddoner - Registro de Hábitos</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background-color: #f4f4f9; }
+        form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 300px; }
+        input, select, button { width: 100%; margin-bottom: 15px; padding: 10px; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <form id="registroHabitos">
+        <h2>Únete a Oddoner</h2>
+        <input type="text" id="nombre" placeholder="Nombre completo" required>
+        <input type="email" id="correo" placeholder="Correo electrónico" required>
+        <select id="genero">
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+        </select>
+        <input type="number" id="edad" placeholder="Edad" required>
+        <button type="submit">Registrarme</button>
+    </form>
+
+    <script>
+        document.getElementById('registroHabitos').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const datos = {
+                nombre: document.getElementById('nombre').value,
+                correo: document.getElementById('correo').value,
+                genero: document.getElementById('genero').value,
+                edad: parseInt(document.getElementById('edad').value)
+            };
+
+            // Tu URL de Cloudflare Worker
+            const url = "https://oddoner-appi.odonerapp.workers.dev";
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok) {
+                    alert("¡Bienvenido a Oddoner! Te has registrado correctamente.");
+                    document.getElementById('registroHabitos').reset();
+                } else {
+                    alert("Error: " + (resultado.error || "No se pudo registrar"));
+                }
+            } catch (error) {
+                alert("Error de conexión con el servidor");
+            }
+        });
+    </script>
+</body>
+</html>

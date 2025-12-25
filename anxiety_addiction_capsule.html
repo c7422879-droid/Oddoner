@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cápsula de Ansiedad y Adicción - Oddoner</title>
+    <link rel="stylesheet" href="capsule.css">
+</head>
+<body>
+    <header>
+        <h1>Cápsula de Ansiedad y Adicción</h1>
+        <nav>
+            <a href="index.html">Inicio</a>
+        </nav>
+    </header>
+    <main>
+        <div id="quiz-container">
+            <div id="disclaimer">
+                <h2>Importante</h2>
+                <p>Esta es una herramienta de autoevaluación y no un diagnóstico. Los resultados no reemplazan la consulta con un profesional de la salud mental. Si tienes preocupaciones sobre tu salud, por favor, busca ayuda profesional.</p>
+            </div>
+            <form id="quiz-form">
+                <h3>Sección de Ansiedad</h3>
+                <div class="question">
+                    <p>1. ¿Sientes nerviosismo, ansiedad o te pones al límite con frecuencia?</p>
+                    <label><input type="radio" name="q1" value="0"><span>Nunca</span></label>
+                    <label><input type="radio" name="q1" value="1"><span>A veces</span></label>
+                    <label><input type="radio" name="q1" value="2"><span>A menudo</span></label>
+                    <label><input type="radio" name="q1" value="3"><span>Siempre</span></label>
+                </div>
+                <div class="question">
+                    <p>2. ¿No puedes detener o controlar la preocupación?</p>
+                    <label><input type="radio" name="q2" value="0"><span>Nunca</span></label>
+                    <label><input type="radio" name="q2" value="1"><span>A veces</span></label>
+                    <label><input type="radio" name="q2" value="2"><span>A menudo</span></label>
+                    <label><input type="radio" name="q2" value="3"><span>Siempre</span></label>
+                </div>
+                <div class="question">
+                    <p>3. ¿Te preocupas demasiado por diferentes cosas?</p>
+                    <label><input type="radio" name="q3" value="0"><span>Nunca</span></label>
+                    <label><input type="radio" name="q3" value="1"><span>A veces</span></label>
+                    <label><input type="radio" name="q3" value="2"><span>A menudo</span></label>
+                    <label><input type="radio" name="q3" value="3"><span>Siempre</span></label>
+                </div>
+
+                <h3>Sección de Adicción</h3>
+                <div class="question">
+                    <p>4. ¿Has intentado reducir o detener el consumo de alguna sustancia sin éxito?</p>
+                    <label><input type="radio" name="q4" value="0"><span>Nunca</span></label>
+                    <label><input type="radio" name="q4" value="1"><span>A veces</span></label>
+                    <label><input type="radio" name="q4" value="2"><span>A menudo</span></label>
+                    <label><input type="radio" name="q4" value="3"><span>Siempre</span></label>
+                </div>
+                <div class="question">
+                    <p>5. ¿Sientes la necesidad de consumir para poder relajarte o sentirte mejor?</p>
+                    <label><input type="radio" name="q5" value="0"><span>Nunca</span></label>
+                    <label><input type="radio" name="q5" value="1"><span>A veces</span></label>
+                    <label><input type="radio" name="q5" value="2"><span>A menudo</span></label>
+                    <label><input type="radio" name="q5" value="3"><span>Siempre</span></label>
+                </div>
+                <div class="question">
+                    <p>6. ¿Has tenido problemas en tus relaciones, trabajo o estudios debido al consumo?</p>
+                    <label><input type="radio" name="q6" value="0"><span>Nunca</span></label>
+                    <label><input type="radio" name="q6" value="1"><span>A veces</span></label>
+                    <label><input type="radio" name="q6" value="2"><span>A menudo</span></label>
+                    <label><input type="radio" name="q6" value="3"><span>Siempre</span></label>
+                </div>
+
+                <button type="button" onclick="calculateScore()">Ver Resultados</button>
+            </form>
+            <div id="results" style="display: none;">
+                <h2>Resultados</h2>
+                <p id="result-text"></p>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Oddoner. Todos los derechos reservados.</p>
+    </footer>
+    <script>
+        function calculateScore() {
+            const form = document.getElementById('quiz-form');
+            const results = document.getElementById('results');
+            const resultText = document.getElementById('result-text');
+            let score = 0;
+            const totalQuestions = 6;
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const question = form.elements['q' + i];
+                if (question.value) {
+                    score += parseInt(question.value);
+                } else {
+                    alert('Por favor, responde todas las preguntas.');
+                    return;
+                }
+            }
+
+            let feedback = '';
+            if (score <= 5) {
+                feedback = 'Tus respuestas sugieren un nivel bajo de síntomas de ansiedad y adicción. Sin embargo, es importante seguir cuidando tu bienestar.';
+            } else if (score <= 11) {
+                feedback = 'Tus respuestas sugieren un nivel moderado de síntomas. Podría ser beneficioso para ti hablar con un amigo, familiar o un profesional de la salud mental sobre cómo te sientes.';
+            } else {
+                feedback = 'Tus respuestas sugieren un nivel alto de síntomas. Es muy recomendable que hables con un profesional de la salud mental para una evaluación completa y apoyo.';
+            }
+
+            resultText.innerText = feedback;
+            results.style.display = 'block';
+            form.style.display = 'none';
+        }
+    </script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').then(registration => {
+                console.log('ServiceWorker registrado con éxito:', registration.scope);
+            }, err => {
+                console.log('El registro de ServiceWorker falló:', err);
+            });
+        });
+    }
+</script>
+</body>
+</html>

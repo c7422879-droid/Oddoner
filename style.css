@@ -1,0 +1,77 @@
+/* Vercel-like Dark Theme */
+:root {
+  --bg-color: #0a0a0a;
+  --accents-1: #111;
+  --accents-2: #333;
+  --foreground-color: #fff;
+  --secondary-color: #888;
+  --geist-radius: 5px;
+  --geist-gap: 16px;
+  --vercel-blue: #0070f3;
+}
+
+/* 
+  NOTA: Tus estilos actuales están en una etiqueta <style> en index.html.
+  Para una mejor organización, considera moverlos gradualmente a este archivo.
+  Estos son estilos base inspirados en Vercel que puedes expandir.
+*/
+
+body {
+  background-color: var(--bg-color);
+  color: var(--foreground-color);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  margin: 0;
+}
+
+.page-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: calc(var(--geist-gap) * 2);
+}
+
+/* Vercel-like Fieldset/Card */
+.fieldset {
+  background-color: var(--accents-1);
+  border: 1px solid var(--accents-2);
+  border-radius: var(--geist-radius);
+  padding: var(--geist-gap);
+  margin-bottom: var(--geist-gap);
+}
+
+.fieldset-header {
+  padding-bottom: var(--geist-gap);
+}
+
+.fieldset-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.fieldset-header p {
+  color: var(--secondary-color);
+  font-size: 0.875rem;
+}
+
+.fieldset-footer {
+  background-color: var(--bg-color);
+  border-top: 1px solid var(--accents-2);
+  padding: var(--geist-gap);
+  margin: var(--geist-gap) calc(var(--geist-gap) * -1) calc(var(--geist-gap) * -1);
+  border-bottom-left-radius: var(--geist-radius);
+  border-bottom-right-radius: var(--geist-radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fieldset-footer .status {
+  color: var(--secondary-color);
+  font-size: 0.875rem;
+}
+
+/* Ejemplo de uso de una imagen desde assets */
+.some-icon {
+    background-image: url('assets/icon-192.png');
+    width: 24px;
+    height: 24px;
+}

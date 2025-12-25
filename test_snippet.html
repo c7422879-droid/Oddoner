@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Component Test</title>
+</head>
+<body>
+
+    <h1>UI Snippet Test</h1>
+    <p>Open the developer console (F12) to see the test results.</p>
+
+    <div id="test-container">
+        <!-- The snippet from the user goes here -->
+        <div style="display: flex; justify-content: space-between; padding: 10px; background: #1e1f20;">
+            <span id="saludo-usuario" style="color: #8ab4f8; font-weight: bold;">Cargando...</span>
+            <button id="logout-btn" style="background: none; border: 1px solid #ff8a80; color: #ff8a80; cursor: pointer; border-radius: 15px; padding: 5px 15px;">
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+
+    <hr>
+    <h2>Test Results</h2>
+    <pre id="test-results"></pre>
+
+    <script>
+        const resultsEl = document.getElementById('test-results');
+        const log = (message) => {
+            resultsEl.textContent += message + '\n';
+            console.log(message);
+        };
+        const assert = (condition, message) => {
+            if (!condition) {
+                log(`❌ FAIL: ${message}`);
+                console.assert(condition, message);
+            } else {
+                log(`✅ PASS: ${message}`);
+            }
+        };
+
+        // --- Test Setup ---
+        let logoutCalled = false;
+        function logout() {
+            logoutCalled = true;
+        }
+        
+        const logoutButton = document.getElementById('logout-btn');
+        logoutButton.addEventListener('click', logout);
+
+
+        // --- Test Execution ---
+        function runTests() {
+            log('Running tests for the user greeting and logout component...');
+
+            // Test 1: Initial state of the greeting
+            const greetingElement = document.getElementById('saludo-usuario');
+            assert(greetingElement.innerText === 'Cargando...', 'Initial greeting text should be "Cargando..."');
+            
+            // Test 2: Update greeting text
+            const newName = 'Daniel';
+            greetingElement.innerText = `Hola, ${newName}`;
+            assert(greetingElement.innerText === 'Hola, Daniel', 'Greeting text should update correctly.');
+
+            // Test 3: Logout button functionality
+            logoutCalled = false; // Reset mock state
+            logoutButton.click();
+            assert(logoutCalled === true, 'logout() function should be called on button click.');
+            
+            log('\nAll tests completed.');
+        }
+
+        // Run tests on page load
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+
+</body>
+</html>

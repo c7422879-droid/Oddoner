@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oddoner - Inicio</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #000; color: #e3e3e3; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        nav { width: 100%; padding: 20px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; background: #1e1e1e; border-bottom: 1px solid #333; }
+        .container { max-width: 800px; width: 90%; margin-top: 50px; text-align: center; }
+        .card { background: #1e1e1e; padding: 30px; border-radius: 24px; border: 1px solid #333; box-shadow: 0 4px 24px rgba(0,0,0,0.5); }
+        h1 { background: linear-gradient(135deg, #1a73e8, #8ab4f8); background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.5rem; }
+        .btn-logout { padding: 8px 20px; background: transparent; border: 1px solid #ff8a80; color: #ff8a80; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .btn-logout:hover { background: rgba(255,138,128,0.1); }
+        .user-name { color: #8ab4f8; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div style="display: flex; justify-content: space-between; padding: 10px; background-clip: #1e1f20; width: 100%; box-sizing: border-box; align-items: center;">
+        <span id="saludo-usuario" style="color: #8ab4f8; font-weight: bold;">Cargando...</span>
+        <button onclick="logout()" style="background: none; border: 1px solid #ff8a80; color: #ff8a80; cursor: pointer; border-radius: 15px; padding: 5px 15px;">
+            Cerrar Sesión
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>Bienvenido a Oddoner</h1>
+            <p>Hola, <span id="nombre-display" class="user-name">Usuario</span>. Has iniciado sesión correctamente.</p>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+            <p>Este es tu panel principal. Desde aquí podrás gestionar tu cuenta próximamente.</p>
+        </div>
+    </div>
+
+    <script>
+        // BLOQUE DE SEGURIDAD INSTANTÁNEO
+        if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+            document.getElementById('nombre-display').innerText = nombre;
+            document.getElementById('saludo-usuario').innerText = `Hola, ${nombre}`;
+        };
+
+        function logout() {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('usuario_nombre');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

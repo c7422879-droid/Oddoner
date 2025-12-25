@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Analizador de Sustancias</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#0b0d10;
+  --card:#151821;
+  --text:#e6e8ee;
+  --muted:#9aa0aa;
+  --accent:#4cc2ff;
+  --danger:#ff4c4c;
+}
+
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  padding:20px;
+}
+
+.app{
+  width:100%;
+  max-width:420px;
+}
+
+h1{
+  text-align:center;
+  font-size:1.4em;
+  margin-bottom:20px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:15px;
+}
+
+label{
+  display:block;
+  font-size:.9em;
+  margin-bottom:6px;
+  color:var(--muted);
+}
+
+select,button{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  font-size:1em;
+}
+
+select{
+  background:#1c2030;
+  color:var(--text);
+}
+
+button{
+  background:var(--accent);
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+.section-title{
+  color:var(--accent);
+  font-size:1em;
+  margin-bottom:8px;
+}
+
+p{
+  font-size:.9em;
+  line-height:1.5;
+}
+
+.warning{
+  color:var(--danger);
+  font-weight:600;
+}
+
+.disclaimer{
+  font-size:.7em;
+  color:var(--muted);
+  text-align:center;
+  margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<h1>🧠 Analizador de Sustancias</h1>
+
+<div class="card">
+  <label>Selecciona la sustancia</label>
+  <select id="sustancia">
+    <option value="">— Elegir —</option>
+    <option value="alcohol">Alcohol</option>
+    <option value="cannabis">Cannabis (THC)</option>
+    <option value="cocaina">Cocaína</option>
+    <option value="mdma">MDMA</option>
+    <option value="lsd">LSD</option>
+    <option value="benzo">Benzodiacepinas</option>
+  </select>
+</div>
+
+<button onclick="analizar()">Analizar estado</button>
+
+<div id="resultado"></div>
+
+<p class="disclaimer">
+Educativo · Reducción de daños · No sustituye atención médica
+</p>
+
+</div>
+
+<script>
+const data = {
+  alcohol:{
+    sangre:"6–12 horas",
+    dano:"Disminución de GABA y dopamina → ansiedad de rebote, irritabilidad, bajo ánimo.",
+    mejora:"Dormir bien, hidratarse, electrolitos, evitar más alcohol por 48h."
+  },
+  cannabis:{
+    sangre:"2–7 días",
+    dano:"Desregulación dopaminérgica → apatía, niebla mental temporal.",
+    mejora:"Ejercicio ligero, sol, rutina de sueño, pausas prolongadas."
+  },
+  cocaina:{
+    sangre:"24–48 horas",
+    dano:"Caída abrupta de dopamina → depresión, paranoia, fatiga mental.",
+    mejora:"Descanso profundo, comida real, cero estimulantes varios días."
+  },
+  mdma:{
+    sangre:"24–48 horas",
+    dano:"Depleción de serotonina → bajón emocional, ansiedad, insomnio.",
+    mejora:"Dormir, hidratarse, magnesio, omega-3, esperar semanas antes de repetir."
+  },
+  lsd:{
+    sangre:"12–24 horas",
+    dano:"Sobrecarga cognitiva → ansiedad residual, sensibilidad emocional.",
+    mejora:"Integración emocional, descanso, evitar cannabis posterior."
+  },
+  benzo:{
+    sangre:"1–3 días",
+    dano:"Alteración GABA → ansiedad rebote, confusión, dependencia.",
+    mejora:"No suspender bruscamente, sueño regular, apoyo profesional."
+  }
+};
+
+function analizar(){
+  const val = document.getElementById("sustancia").value;
+  const out = document.getElementById("resultado");
+
+  if(!val){
+    out.innerHTML = "<div class='card warning'>Selecciona una sustancia</div>";
+    return;
+  }
+
+  const s = data[val];
+
+  out.innerHTML = `
+    <div class="card">
+      <div class="section-title">⏱ Tiempo en sangre</div>
+      <p>${s.sangre}</p>
+
+      <div class="section-title">🧠 Daño mental frecuente</div>
+      <p>${s.dano}</p>
+
+      <div class="section-title">🛠 Qué ayuda a mejorar</div>
+      <p>${s.mejora}</p>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
+            greetingElement.innerText = `Hola, ${newName}`;
+            assert(greetingElement.innerText === `Hola, ${newName}`, `Greeting text should update to "Hola, ${newName}"`);
+
+            // Test 3: Logout function call
+            logoutCalled = false; // Reset before test
+            logoutButton.click();
+            assert(logoutCalled, 'Logout function should be called on button click');
+        }
+
+        // Run tests after a short delay to ensure DOM is ready
+        window.onload = () => {
+            setTimeout(runTests, 100);
+        };
+    </script>

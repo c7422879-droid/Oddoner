@@ -1,0 +1,206 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    --bg-dark: #121212;
+    --primary: #1a1a1a;
+    --text: #e0e0e0;
+    --accent1: #bb86fc;
+    --accent2: #03dac6;
+    --surface: #1e1e1e;
+    --warning-bg: rgba(255, 229, 100, 0.1);
+    --warning-border: #ffe564;
+    --warning-text: #ffe564;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-dark);
+    color: var(--text);
+}
+
+header {
+    background: var(--primary);
+    color: var(--accent1);
+    padding: 2rem 1rem;
+    text-align: center;
+    border-bottom: 2px solid var(--accent2);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+nav a {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--accent2);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--accent2);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+nav a:hover {
+    background: var(--accent2);
+    color: var(--bg-dark);
+}
+
+main {
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#quiz-container {
+    background: var(--surface);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px var(--shadow-color);
+}
+
+#disclaimer {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--warning-border);
+}
+
+#disclaimer h2 {
+    margin-top: 0;
+    color: var(--warning-border);
+}
+
+#quiz-form h3 {
+    font-size: 1.5rem;
+    color: var(--accent1);
+    border-bottom: 1px solid var(--accent1);
+    padding-bottom: 0.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.question {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+.question p {
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.question label {
+    display: block;
+    background: #2a2a4a;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background 0.3s, border-left 0.3s;
+    border-left: 3px solid transparent;
+}
+
+.question label:hover {
+    background: #3a3a60;
+}
+
+.question input[type="radio"] {
+    display: none;
+}
+
+.question input[type="radio"]:checked + span {
+    color: var(--accent2);
+    font-weight: 600;
+}
+
+/* Custom radio button style */
+.question label span {
+    display: inline-block;
+    position: relative;
+    padding-left: 30px;
+}
+
+.question label span::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--accent1);
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.question input[type="radio"]:checked + span::before {
+    background-color: var(--accent1);
+    border-color: var(--accent1);
+}
+.question input[type="radio"]:checked + span::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%) scale(1);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bg-dark);
+    transition: transform 0.3s;
+}
+.question input[type="radio"] ~ span::after {
+    transform: translateY(-50%) scale(0);
+}
+
+
+button {
+    background: var(--accent1);
+    color: var(--bg-dark);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    text-transform: uppercase;
+    width: 100%;
+    margin-top: 1rem;
+    transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background: var(--accent2);
+    transform: translateY(-2px);
+}
+
+#results {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: var(--primary);
+    border-radius: 10px;
+    text-align: center;
+}
+#results h2 {
+    color: var(--accent2);
+}
+
+footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: var(--primary);
+    color: var(--text);
+    opacity: 0.7;
+    margin-top: 2rem;
+}

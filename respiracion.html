@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respiración Guiada - Oddoner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --text: #e0e0e0;
+            --purple-calm: #7e57c2;
+            --purple-deep: #5e35b1;
+            --shadow-color: rgba(126, 87, 194, 0.4);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .breathing-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circle {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--purple-calm), var(--purple-deep));
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 20px var(--shadow-color), 0 0 40px var(--shadow-color);
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        .instructions {
+            font-size: 1.5rem;
+            font-weight: 300;
+            z-index: 10;
+            color: white;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            animation: text-fade 8s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(2.5);
+                opacity: 1;
+            }
+        }
+
+        @keyframes text-fade {
+            0%, 100% {
+                content: 'Exhala...';
+                opacity: 0;
+            }
+            10% {
+                content: 'Inhala...';
+                opacity: 1;
+            }
+            40% {
+                content: 'Inhala...';
+                opacity: 1;
+            }
+            50% {
+                content: 'Sostén...';
+                opacity: 1;
+            }
+            60% {
+                content: 'Sostén...';
+                opacity: 1;
+            }
+            70% {
+                content: 'Exhala...';
+                opacity: 1;
+            }
+            95% {
+                opacity: 0;
+            }
+        }
+        
+        #instruction-text {
+             animation: text-opacity 8s ease-in-out infinite;
+        }
+
+        @keyframes text-opacity {
+            0%, 100% { opacity: 0; }
+            10%, 90% { opacity: 1; }
+        }
+
+        .home-link {
+            position: absolute;
+            bottom: 2rem;
+            color: var(--purple-calm);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--purple-calm);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .home-link:hover {
+            background: var(--purple-calm);
+            color: var(--bg-dark);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="breathing-container">
+        <div class="circle"></div>
+        <div class="instructions">
+            <p id="instruction-text"></p>
+        </div>
+    </div>
+    
+    <a href="index.html" class="home-link">Volver al Inicio</a>
+
+    <script>
+        const instructionText = document.getElementById('instruction-text');
+        const cycle = 8000; // 8 seconds for the full cycle
+
+        const instructions = [
+            { text: 'Inhala...', duration: 4000 }, // 0s to 4s
+            { text: 'Sostén...', duration: 1500 }, // 4s to 5.5s
+            { text: 'Exhala...', duration: 2500 }  // 5.5s to 8s
+        ];
+
+        function runInstructions() {
+            let totalDuration = 0;
+            instructions.forEach(instruction => {
+                setTimeout(() => {
+                    instructionText.textContent = instruction.text;
+                }, totalDuration);
+                totalDuration += instruction.duration;
+            });
+        }
+
+        // Initial run
+        runInstructions();
+        // Loop
+        setInterval(runInstructions, cycle);
+    </script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').then(registration => {
+                console.log('ServiceWorker registrado con éxito:', registration.scope);
+            }, err => {
+                console.log('El registro de ServiceWorker falló:', err);
+            });
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    --bg-dark: #121212;
+    --primary: #1a1a1a;
+    --text: #e0e0e0;
+    --accent1: #bb86fc;
+    --accent2: #03dac6;
+    --surface: #1e1e1e;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-dark);
+    color: var(--text);
+}
+
+header {
+    background: var(--primary);
+    color: var(--accent1);
+    padding: 2rem 1rem;
+    text-align: center;
+    border-bottom: 2px solid var(--accent2);
+}
+
+header h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2.2rem;
+}
+
+header p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text);
+    opacity: 0.8;
+}
+
+nav a.home-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--accent2);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--accent2);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+nav a.home-link:hover {
+    background: var(--accent2);
+    color: var(--bg-dark);
+}
+
+main {
+    padding: 2rem 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+section {
+    background: var(--surface);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px var(--shadow-color);
+}
+
+h2 {
+    color: var(--accent1);
+    text-align: center;
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+
+/* Card Container */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    perspective: 1000px;
+}
+
+.card {
+    background-color: transparent;
+    height: 220px;
+    cursor: pointer;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-front {
+    background: var(--primary);
+    border: 1px solid var(--accent1);
+}
+
+.card-front h3 {
+    color: var(--accent1);
+    margin-top: 0;
+}
+
+.card-back {
+    background: var(--accent1);
+    color: var(--bg-dark);
+    transform: rotateY(180deg);
+}
+
+.card-back h4 {
+    margin-top: 0;
+}
+.card-back ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+.card-back li {
+    margin-bottom: 0.5rem;
+}
+
+
+/* Exercises Section */
+.exercise {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+.exercise h3 {
+    color: var(--accent2);
+    margin-top: 0;
+}
+
+audio {
+    width: 100%;
+    margin-top: 1rem;
+    filter: invert(1) hue-rotate(180deg);
+}
+
+footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: var(--primary);
+    color: var(--text);
+    opacity: 0.7;
+}

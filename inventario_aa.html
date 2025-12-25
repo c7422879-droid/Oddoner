@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Moral Pro - AA</title>
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --primary: #1a1a1a;
+            --text: #e0e0e0;
+            --accent1: #bb86fc;
+            --accent2: #03dac6;
+            --surface: #1e1e1e;
+            --success: #66bb6a;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container { width: 100%; max-width: 600px; box-sizing: border-box; }
+        .card {
+            background: var(--surface);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            margin-bottom: 20px;
+        }
+        h2 { text-align: center; font-size: 1.5rem; margin-top: 0; color: var(--accent1); }
+        
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.9rem; color: var(--accent2); }
+        input, textarea, select {
+            width: 100%; padding: 12px; margin-top: 5px;
+            border: 1px solid #555; border-radius: 10px;
+            box-sizing: border-box; background: var(--primary);
+            color: var(--text);
+        }
+
+        .stats-container {
+            display: flex; justify-content: space-around;
+            padding: 15px; background: var(--primary); border-radius: 15px; margin-bottom: 20px;
+        }
+        .stat-item { text-align: center; }
+        .stat-val { display: block; font-size: 1.2rem; font-weight: bold; color: var(--accent1); }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; }
+
+        button {
+            width: 100%; padding: 15px; margin-top: 20px;
+            background: var(--accent1); color: var(--bg-dark); border: none;
+            border-radius: 12px; font-weight: bold; cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { background: var(--accent2); }
+
+        .item-card {
+            background: var(--primary); border-left: 5px solid var(--accent1);
+            padding: 15px; border-radius: 10px; margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .solucion-box {
+            background: rgba(102, 187, 106, 0.1); padding: 10px; border-radius: 8px;
+            margin-top: 10px; font-style: italic; color: var(--success);
+        }
+
+        #modal-bill {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+            justify-content: center; align-items: center; z-index: 100;
+        }
+        .modal-content {
+            background: var(--surface); padding: 40px; border-radius: 25px;
+            max-width: 80%; text-align: center; position: relative;
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .home-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--accent2);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h2>Inventario 4to Paso + Mapa de Calor + Solución</h2>
+        <div class="stats-container">
+            <div class="stat-item"><span id="s-miedo" class="stat-val">0</span><span class="stat-label">Miedo</span></div>
+            <div class="stat-item"><span id="s-ego" class="stat-val">0</span><span class="stat-label">Egoísmo</span></div>
+            <div class="stat-item"><span id="s-orgullo" class="stat-val">0</span><span class="stat-label">Orgullo</span></div>
+            <div class="stat-item"><span id="s-desh" class="stat-val">0</span><span class="stat-label">Deshonest.</span></div>
+        </div>
+
+        <label for="persona">1. Resentimiento contra:</label>
+        <input type="text" id="persona" placeholder="Persona, Institución o Principio">
+
+        <label for="causa">2. Causa:</label>
+        <textarea id="causa" rows="2" placeholder="¿Qué pasó?"></textarea>
+
+        <label for="defecto">3. Mi Parte (Patrón predominante):</label>
+        <select id="defecto">
+            <option value="miedo">Miedo</option>
+            <option value="ego">Egoísmo</option>
+            <option value="orgullo">Orgullo / Amor Propio</option>
+            <option value="desh">Deshonestidad</option>
+        </select>
+
+        <label for="solucion">4. La Solución (Acción Opuesta):</label>
+        <input type="text" id="solucion" placeholder="Ej: Practicar la tolerancia">
+
+        <button onclick="procesar()">ACEPTAR E INVENTARIAR</button>
+    </div>
+
+    <div id="lista-inventario"></div>
+    
+    <a href="index.html" class="home-link">Volver al Menú</a>
+</div>
+
+<div id="modal-bill">
+    <div class="modal-content">
+        <h3 style="color: var(--accent1);">Mensaje de Bill W.</h3>
+        <p id="frase-txt" style="font-size: 1.2rem; line-height: 1.5;"></p>
+        <button onclick="cerrarModal()">Continuar</button>
+    </div>
+</div>
+
+<script>
+    let stats = { miedo: 0, ego: 0, orgullo: 0, desh: 0 };
+    
+    const frasesBill = [
+        "El inventario moral es el punto de partida para la libertad.",
+        "No somos perfectos. Lo importante es que estamos dispuestos a crecer.",
+        "El dolor es el megáfono que Dios utiliza para despertar a un mundo sordo.",
+        "La clave es la buena voluntad.",
+        "Nuestros defectos de carácter son simplemente instintos naturales descarrilados."
+    ];
+
+    function procesar() {
+        const p = document.getElementById('persona').value;
+        const c = document.getElementById('causa').value;
+        const d = document.getElementById('defecto').value;
+        const s = document.getElementById('solucion').value;
+
+        if(!p || !c || !s) {
+            alert("Por favor, completa todos los campos de tu inventario.");
+            return;
+        }
+
+        actualizarMapaDeCalor(d);
+        crearTarjetaInventario(p, c, s);
+        mostrarModalConFrase();
+        limpiarFormulario();
+    }
+
+    function actualizarMapaDeCalor(defecto) {
+        stats[defecto]++;
+        const statElement = document.getElementById(`s-${defecto}`);
+        statElement.innerText = stats[defecto];
+        // Animación para destacar el cambio
+        statElement.style.transition = 'transform 0.2s';
+        statElement.style.transform = 'scale(1.3)';
+        setTimeout(() => {
+            statElement.style.transform = 'scale(1)';
+        }, 200);
+    }
+
+    function crearTarjetaInventario(persona, causa, solucion) {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+            <strong>${persona}</strong>
+            <p style="margin: 5px 0;">${causa}</p>
+            <div class="solucion-box">🎯 Solución: ${solucion}</div>
+        `;
+        document.getElementById('lista-inventario').prepend(card);
+    }
+
+    function mostrarModalConFrase() {
+        const fraseAleatoria = frasesBill[Math.floor(Math.random() * frasesBill.length)];
+        document.getElementById('frase-txt').innerText = `"${fraseAleatoria}"`;
+        document.getElementById('modal-bill').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modal-bill').style.display = 'none';
+        document.getElementById('persona').focus(); // Foco en el primer campo
+    }
+
+    function limpiarFormulario() {
+        document.getElementById('persona').value = '';
+        document.getElementById('causa').value = '';
+        document.getElementById('solucion').value = '';
+        // No se limpia el select para que el usuario pueda repetir el patrón si lo desea.
+    }
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').then(registration => {
+                console.log('ServiceWorker registrado con éxito:', registration.scope);
+            }, err => {
+                console.log('El registro de ServiceWorker falló:', err);
+            });
+        });
+    }
+</script>
+</body>
+</html>

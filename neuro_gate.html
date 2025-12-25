@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuro Gate - Oddoner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-game: #1a1d2d;
+            --text: #e0e0f0;
+            --grid-bg: #2a2f42;
+            --card-bg: #3a415a;
+            --accent: #ffab40;
+            --correct: #4caf50;
+            --incorrect: #f44336;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-game);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 1rem;
+        }
+        h1 {
+            color: var(--accent);
+        }
+        .level-indicator, .target-display {
+            margin-bottom: 1.5rem;
+        }
+        .target-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+        .target-shape {
+            width: 50px;
+            height: 50px;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(var(--grid-size, 5), 1fr);
+            gap: 10px;
+            background-color: var(--grid-bg);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .shape-card {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .shape-card:hover {
+            transform: scale(1.05);
+        }
+        .shape-card svg {
+            width: 70%;
+            height: 70%;
+        }
+        .shape-card.correct {
+            background-color: var(--correct);
+            transform: scale(0.9);
+            cursor: not-allowed;
+        }
+        .shape-card.incorrect {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        .message-box {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            height: 30px;
+        }
+        .home-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div class="header">
+            <h1>Neuro Gate</h1>
+            <p>Encuentra todas las figuras que coincidan con el objetivo.</p>
+        </div>
+
+        <div class="level-indicator">Nivel: <span id="level">1</span> de 20</div>
+        
+        <div class="target-display">
+            <h2>Encuentra:</h2>
+            <div id="target-shape-container" class="target-shape"></div>
+        </div>
+
+        <div id="game-grid" class="game-grid"></div>
+
+        <div id="message" class="message-box"></div>
+    </div>
+
+    <a href="index.html" class="home-link">Volver al Menú</a>
+
+    <script>
+        const gameGrid = document.getElementById('game-grid');
+        const levelDisplay = document.getElementById('level');
+        const targetShapeContainer = document.getElementById('target-shape-container');
+        const messageBox = document.getElementById('message');
+
+        const SHAPES = {
+            circle: (color) => `<svg viewbox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="${color}" /></svg>`,
+            square: (color) => `<svg viewbox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="${color}" /></svg>`,
+            triangle: (color) => `<svg viewbox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="${color}" /></svg>`,
+            star: (color) => `<svg viewbox="0 0 100 100"><polygon points="50,5 61,40 98,40 68,62 79,96 50,75 21,96 32,62 2,40 39,40" fill="${color}" /></svg>`,
+            hexagon: (color) => `<svg viewbox="0 0 100 100"><polygon points="25,10 75,10 95,50 75,90 25,90 5,50" fill="${color}" /></svg>`
+        };
+        const COLORS = ['#e91e63', '#9c27b0', '#3f51b5', '#03a9f4', '#009688', '#8bc34a', '#ffeb3b', '#ff9800'];
+        const SHAPE_KEYS = Object.keys(SHAPES);
+
+        const LEVELS = Array.from({ length: 20 }, (_, i) => {
+            const level = i + 1;
+            return {
+                level: level,
+                gridSize: 3 + Math.floor(i / 4),
+                numShapes: 2 + Math.floor(i / 5),
+                numTargets: 3 + Math.floor(i / 2),
+            };
+        });
+
+        let currentLevel = 0;
+        let targetShape, targetColor;
+        let targetsToFind = 0;
+
+        function generateLevel() {
+            const levelData = LEVELS[currentLevel];
+            levelDisplay.innerText = `${levelData.level} de 20`;
+            messageBox.innerText = '';
+            gameGrid.innerHTML = '';
+            gameGrid.style.setProperty('--grid-size', levelData.gridSize);
+
+            // Select random shapes and colors for this level
+            const levelShapes = [...SHAPE_KEYS].sort(() => 0.5 - Math.random()).slice(0, levelData.numShapes);
+            const levelColors = [...COLORS].sort(() => 0.5 - Math.random()).slice(0, levelData.numShapes);
+
+            // Select target
+            targetShape = levelShapes[Math.floor(Math.random() * levelShapes.length)];
+            targetColor = levelColors[Math.floor(Math.random() * levelColors.length)];
+            targetShapeContainer.innerHTML = SHAPES[targetShape](targetColor);
+
+            const gridItems = [];
+            targetsToFind = levelData.numTargets;
+
+            // Add targets to the grid
+            for (let i = 0; i < targetsToFind; i++) {
+                gridItems.push({ shape: targetShape, color: targetColor, isTarget: true });
+            }
+
+            // Add distractors
+            const numDistractors = (levelData.gridSize ** 2) - targetsToFind;
+            for (let i = 0; i < numDistractors; i++) {
+                let distractorShape = levelShapes[Math.floor(Math.random() * levelShapes.length)];
+                let distractorColor = levelColors[Math.floor(Math.random() * levelColors.length)];
+                // Ensure distractor is not the same as target
+                while (distractorShape === targetShape && distractorColor === targetColor) {
+                    distractorShape = levelShapes[Math.floor(Math.random() * levelShapes.length)];
+                    distractorColor = levelColors[Math.floor(Math.random() * levelColors.length)];
+                }
+                gridItems.push({ shape: distractorShape, color: distractorColor, isTarget: false });
+            }
+
+            // Shuffle and render grid
+            gridItems.sort(() => 0.5 - Math.random());
+            gridItems.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('shape-card');
+                card.innerHTML = SHAPES[item.shape](item.color);
+                card.addEventListener('click', () => handleCardClick(card, item.isTarget));
+                gameGrid.appendChild(card);
+            });
+        }
+
+        function handleCardClick(card, isTarget) {
+            if (card.classList.contains('correct')) return;
+
+            if (isTarget) {
+                card.classList.add('correct');
+                targetsToFind--;
+                if (targetsToFind === 0) {
+                    levelComplete();
+                }
+            } else {
+                card.classList.add('incorrect');
+                if(navigator.vibrate) navigator.vibrate(100);
+                setTimeout(() => card.classList.remove('incorrect'), 500);
+            }
+        }
+
+        function levelComplete() {
+            messageBox.innerText = '¡Nivel Completado!';
+            currentLevel++;
+            if (currentLevel < LEVELS.length) {
+                setTimeout(generateLevel, 1500);
+            } else {
+                messageBox.innerText = '¡Felicidades, has completado todos los niveles!';
+            }
+        }
+
+        generateLevel();
+    </script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').then(registration => {
+                console.log('ServiceWorker registrado con éxito:', registration.scope);
+            }, err => {
+                console.log('El registro de ServiceWorker falló:', err);
+            });
+        });
+    }
+</script>
+</body>
+</html>

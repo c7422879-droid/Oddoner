@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaciado de Cerebro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="capsule.css">
+</head>
+<body>
+    <div class="capsule-container">
+        <h1 class="capsule-title">Vaciado de Cerebro</h1>
+        <div class="capsule-content">
+            <p>La ansiedad a menudo es "ruido de fondo". Escribirlo lo saca de tu cabeza y lo pone en el papel, donde el cerebro siente que ya no tiene que "recordar" el problema.</p>
+            <textarea id="brainDump" class="brain-dump-area" placeholder="Escribe aquí tus pensamientos, ansiedades, miedos..."></textarea>
+            <button id="saveButton" class="capsule-button">Guardar</button>
+        </div>
+        <a href="index.html" class="back-link">Volver al inicio</a>
+    </div>
+    <script>
+        const brainDump = document.getElementById('brainDump');
+        const saveButton = document.getElementById('saveButton');
+
+        saveButton.addEventListener('click', () => {
+            const textToSave = brainDump.value;
+            const blob = new Blob([textToSave], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.download = 'vaciado_cerebro.txt';
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.click();
+            window.URL.revokeObjectURL(anchor.href);
+        });
+    </script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').then(registration => {
+                console.log('ServiceWorker registrado con éxito:', registration.scope);
+            }, err => {
+                console.log('El registro de ServiceWorker falló:', err);
+            });
+        });
+    }
+</script>
+</body>
+</html>
